@@ -7,8 +7,9 @@ import httpx
 from fastapi import FastAPI, Query, Response, HTTPException
 from fastapi.staticfiles import StaticFiles
 
-app = FastAPI(title="DigitTWIN", version="1.1")
+app = FastAPI(title="DigitTWIN", version="1.2")
 
+# Proxy allowlist (prevents open-proxy abuse)
 ALLOWLIST_PREFIXES = (
     "https://services.arcgis.com/",
     "https://services9.arcgis.com/",
@@ -17,6 +18,7 @@ ALLOWLIST_PREFIXES = (
     "https://overpass-api.de/",
 )
 
+# Tiny cache to speed repeat requests
 CACHE_TTL_SEC = 60
 _cache: Dict[str, Tuple[float, bytes, str]] = {}
 
@@ -31,7 +33,7 @@ def _validate_url(url: str) -> str:
 
 
 @app.get("/proxy")
-async def proxy(url: str = Query(...)):
+async def proxy(url: str = Query(..., description="Full URL to fetch via server-side proxy")):
     target = _validate_url(url)
     now = time.time()
 
@@ -45,7 +47,7 @@ async def proxy(url: str = Query(...)):
         )
 
     async with httpx.AsyncClient(timeout=30.0, follow_redirects=True) as client:
-        r = await client.get(target, headers={"User-Agent": "DigitTWIN/1.1"})
+        r = await client.get(target, headers={"User-Agent": "DigitTWIN/1.2"})
         r.raise_for_status()
         content = r.content
         ctype = r.headers.get("content-type", "application/json")
@@ -70,5 +72,5 @@ async def proxy_options():
     )
 
 
-# ✅ IMPORTANT: static mount must be LAST
+# IMPORTANT: mount static AFTER /proxy routes so it doesn't swallow /proxy.
 app.mount("/", StaticFiles(directory="public", html=True), name="static")
