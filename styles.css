@@ -3,28 +3,36 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>Cuba Ops Digital Twin – FastAPI (Render)</title>
+  <title>Cuba Ops Digital Twin – 2D (Split)</title>
 
   <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
-  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+  <script defer src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 
   <link rel="stylesheet" href="/styles.css" />
+  <script defer src="/app.js"></script>
+
+  <link rel="stylesheet" href="https://unpkg.com/leaflet.markercluster@1.5.3/dist/MarkerCluster.css" />
+  <link rel="stylesheet" href="https://unpkg.com/leaflet.markercluster@1.5.3/dist/MarkerCluster.Default.css" />
+  <script defer src="https://unpkg.com/leaflet.markercluster@1.5.3/dist/leaflet.markercluster.js"></script>
 </head>
 <body>
-<div class="wrap">
+  <div class="wrap">
     <div class="panel">
-      <h2 style="margin:0 0 10px 0;">Cuba Risk This Season (Canvas Test)</h2>
+      <h2 class="h2">Cuba Risk This Season</h2>
 
       <div class="card">
-        <div class="row" style="justify-content:space-between;">
+        <div class="row row-between">
           <div><b>Status:</b> <span id="status">Loading…</span></div>
           <button id="btnReload">Reload</button>
         </div>
-        <div style="margin-top:6px"><b>Last update:</b> <span id="ts">—</span></div>
-        <div style="margin-top:6px" class="small muted" id="net">—</div>
+
+        <div class="mt6"><b>Last update:</b> <span id="ts">—</span></div>
+        <div class="mt6 small muted" id="net">—</div>
+
         <div class="divider"></div>
+
         <div class="row">
-          <label class="pill" title="If live fetch is blocked, Offline mode uses embedded sample data.">
+          <label class="pill" title="If live fetch is blocked, Offline mode uses embedded sample data so you can still test UI + rules.">
             <input id="offline" type="checkbox" checked />
             <span>Offline mode (fallback)</span>
           </label>
@@ -33,25 +41,26 @@
             <span>Diagnostics</span>
           </label>
         </div>
-        <div style="margin-top:8px" class="small muted">
-          Canvas may block external HTTP (CORS), causing <b>TypeError: Failed to fetch</b>. For fastest live loading, run the split zip locally with the proxy.
+
+        <div class="mt8 small muted">
+          For full live data without browser CORS issues, run <code>python server.py</code> and open <code>http://localhost:8000/</code>.
         </div>
       </div>
 
       <div class="card">
-        <h3 style="margin:0 0 8px 0;">Alerts</h3>
+        <h3 class="h3">Alerts</h3>
         <div id="alerts"></div>
       </div>
 
       <div class="card">
-        <h3 style="margin:0 0 8px 0;">Evidence</h3>
+        <h3 class="h3">Evidence</h3>
         <ul id="evidence"></ul>
       </div>
 
       <div class="card">
-        <h3 style="margin:0 0 8px 0;">Debug</h3>
+        <h3 class="h3">Debug</h3>
         <div id="debug" class="small"></div>
-        <div id="tests" class="small muted" style="margin-top:10px;"></div>
+        <div id="tests" class="small muted mt10"></div>
       </div>
     </div>
 
@@ -59,7 +68,7 @@
       <div id="map" class="map"></div>
 
       <div class="legend">
-        <div style="font-weight:700; margin-bottom:6px;">Legend</div>
+        <div class="legendTitle">Legend</div>
         <div class="legendRow"><span class="swatch cuba"></span> Cuba (boundary)</div>
         <div class="legendRow"><span class="swatch storm"></span> Hurricanes (Observed Position)</div>
         <div class="legendRow"><span class="swatch track"></span> Storm Track (Observed Track)</div>
@@ -67,10 +76,10 @@
         <div class="legendRow"><span class="iconLegend" aria-hidden="true">🏥</span> Hospital (OSM asset)</div>
         <div class="legendRow"><span class="iconLegend" aria-hidden="true">🏫</span> School (OSM asset)</div>
         <div class="legendRow"><span class="swatch slide"></span> Landslides</div>
-        <div class="small muted" style="margin-top:6px;">Basemap + points + track</div>
+        <div class="legendRow"><span class="swatch asset"></span> Operational assets (sample)</div>
+        <div class="small muted mt6">Basemap + points + track</div>
       </div>
     </div>
   </div>
-<script src="/app.js"></script>
 </body>
 </html>
